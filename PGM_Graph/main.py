@@ -26,8 +26,8 @@ def arg_parse():
     parser.add_argument("--perturb-feature", dest="perturb_feature", help="color or location.")
     
     parser.set_defaults(
-        node_start = 0,
-        node_end = 1,
+        start = 0,
+        end = 1,
         perturb_indicator = "diff",
         perturb_mode = "mean",
         perturb_feature = "color"
