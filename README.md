@@ -4,12 +4,12 @@ This is the source code for the paper: **PGM-Explainer: Probabilistic Graphical 
 
 ![Image of Yaktocat](https://github.com/vunhatminh/PGMExplainer/blob/master/PGM_Node/Explain_GNN/view/GNNDiagram.png)
 
-Generating PGM Explanation for GNN predictions.
+Repo description:
 
   * The folder PGM_Node contains the codes for the experiments on node classification tasks.
   * The folder PGM_Graph contains the codes for the experiments on graph classification tasks.
 
-Required libraries
+Required libraries:
 
   * numpy 1.19.2
   * networkx 2.5
