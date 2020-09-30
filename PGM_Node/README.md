@@ -1,9 +1,13 @@
 # PGMExplainer for Node classification
 
+This folder contains the source code of using PGM-Explainer to explain node classification.
+
+Example result:
+
 ![Image of Minh](https://github.com/vunhatminh/PGMExplainer/blob/master/PGM_Node/Explain_GNN/view/pgm_304.jpg)
 
 
-There are 3 folders in PGM_Node:
+Folder description:
   * Generate_XA_Data: To generate the graph data for the node classification experiments
   * Train_GNN_model: To train the GNN models for the  node classification tasks
   * Explain_GNN: To generate PGM Explaination for GNN predictions
