@@ -1,4 +1,4 @@
-# PGMExplainer for Graph classification
+# PGM-Explainer for Graph classification
 
 This the code generating PGM explanation for the MNIST graph classification task (demonstrated in the paper).
 
