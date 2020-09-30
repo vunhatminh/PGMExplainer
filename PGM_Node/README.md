@@ -4,8 +4,9 @@ This folder contains the source code of using **PGM-Explainer** to explain node 
 
 Example explaination:
 
-![Image of Minh](https://github.com/vunhatminh/PGMExplainer/blob/master/PGM_Node/Explain_GNN/view/pgm_304.jpg)
-
+<p align="center">
+  <img src="https://github.com/vunhatminh/PGMExplainer/blob/master/PGM_Node/Explain_GNN/view/pgm_304.jpg"/>
+</p>
 
 Folder description:
   * Generate_XA_Data: To generate the graph data for the node classification experiments
