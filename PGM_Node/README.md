@@ -1,15 +1,4 @@
-required library:
-numpy
-networkx
-scipy
-matplotlib
-pandas
-tensorboardX
-sklearn
-pgmpy
-
-NOTE: change name to ckpt
-NOTE: create folder for results
+# PGMExplainer for Node classification
 
 There are 3 folders in PGM_Node:
   * Generate_XA_Data: To generate the graph data for the node classification experiments
@@ -51,3 +40,5 @@ To evaluate explanations, direct into Explain_GNN folder and run:
    * int1: int1 used in generating PGM explanations
    * int2: int2 used in generating PGM explanations
    * reports are stored in result folder
+
+We also include a notebook named ''
