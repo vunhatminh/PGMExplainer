@@ -1,5 +1,7 @@
 # PGMExplainer for Graph classification
 
+This the code generating PGM explanation for the MNIST graph classification task (demonstrated in the paper).
+
 Example image/graph to explain:
 
 ![Image of Yaktocat](https://github.com/vunhatminh/PGMExplainer/blob/master/PGM_Graph/result/example_img.jpg)
