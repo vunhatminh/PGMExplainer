@@ -15,7 +15,7 @@ The MNIST superpixel dataset and the GNN model are obtained from https://github.
 We also include their notebook *prepare_superpixels_MNIST.ipynb* in the *data/superpixels* folder.
 By running it, we will generate a data file named *MNIST.pkl* in the *data/superpixels* folder.
 
-To run PGM explainer run:
+To run PGMExplainer run:
 `python3 main.py --start [int1] --end [int2]`
 
    * int1 [optional]: start index to explain
