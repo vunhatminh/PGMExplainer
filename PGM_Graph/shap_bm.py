@@ -23,8 +23,8 @@ def arg_parse():
         )
     
     parser.set_defaults(
-        node_start = 0,
-        node_end = 1
+        start = 0,
+        end = 1
     )
     return parser.parse_args()
 
