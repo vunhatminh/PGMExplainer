@@ -1,4 +1,7 @@
 # PGMExplainer
+
+![Image of Yaktocat](https://github.com/vunhatminh/PGMExplainer/blob/master/PGM_Node/Explain_GNN/view/GNNDiagram.png)
+
 Generating PGM Explanation for GNN predictions.
 
   * The folder PGM_Node contains the codes for the experiments on node classification tasks.
