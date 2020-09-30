@@ -1,4 +1,4 @@
-# PGMExplainer for Node classification
+# PGM-Explainer for Node classification
 
 This folder contains the source code of using **PGM-Explainer** to explain node classification.
 
