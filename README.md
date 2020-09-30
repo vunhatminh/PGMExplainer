@@ -1,6 +1,6 @@
 # PGMExplainer
 
-This is the source code for the paper: **PGM-Explainer: Probabilistic Graphical Model Explanations for Graph Neural Networks** *by Minh N. Vu and My T. Thai*, proceeding in NeuRIPs 2020.
+This is the source code for the paper: **PGM-Explainer: Probabilistic Graphical Model Explanations for Graph Neural Networks** *by Minh N. Vu and My T. Thai*, proceeding in NeurIPS 2020.
 
 ![Image of Yaktocat](https://github.com/vunhatminh/PGMExplainer/blob/master/PGM_Node/Explain_GNN/view/GNNDiagram.png)
 
