@@ -1,5 +1,8 @@
 # PGMExplainer for Node classification
 
+![Image of Minh](https://github.com/vunhatminh/PGMExplainer/blob/master/PGM_Node/Explain_GNN/view/pgm_304.jpg)
+
+
 There are 3 folders in PGM_Node:
   * Generate_XA_Data: To generate the graph data for the node classification experiments
   * Train_GNN_model: To train the GNN models for the  node classification tasks
