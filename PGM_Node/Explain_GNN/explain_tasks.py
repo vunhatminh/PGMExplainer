@@ -79,7 +79,7 @@ def bitcoin(args):
     model.load_state_dict(ckpt["model_state"]) 
     pred = ckpt["save_data"]["pred"]
     
-    explainer = pe.Node_Explainer(model, A, X, pred, args.num_gc_layers)
+    explainer = pe.Node_Explainer(model, A, X, pred, 1)
     
     node_to_explain = [i for [i] in np.argwhere(np.sum(A,axis = 0) > 2)]
     

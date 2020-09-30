@@ -19,18 +19,7 @@ import utils
 prog_args = configs.arg_parse()
 
 if prog_args.dataset is not None:
-    if prog_args.dataset == "enron":
-        print("Generate enron dataset")
-        
-    elif prog_args.dataset == "ppi_essential":
-        print("Generate ppi_essential dataset")
-    
-    elif prog_args.dataset == "eucore":
-        print("Loading eucore dataset")
-        G, labels, name = utils.read_eucore(feature_generator=featgen.ConstFeatureGen(np.ones(prog_args.input_dim, dtype=float)))
-        utils.save_XAL(G,labels,prog_args)
-        
-    elif prog_args.dataset == "amazon":
+    if prog_args.dataset == "amazon":
         print("Loading amazon dataset")
         G, A, X, name = utils.read_amazon()
         pathA = os.path.join('XAL',prog_args.dataset+'_A')
@@ -46,11 +35,6 @@ if prog_args.dataset is not None:
     elif prog_args.dataset == "bitcoinotc":
         print("Loading bitcoinotc dataset")
         G, labels, name = utils.read_bitcoinotc(feature_generator=None)
-        utils.save_XAL(G,labels,prog_args)
-    
-    elif prog_args.dataset == "epinions":
-        print("Loading epinions dataset")
-        G, labels, name = utils.read_epinions(feature_generator=featgen.ConstFeatureGen(np.ones(prog_args.input_dim, dtype=float)))
         utils.save_XAL(G,labels,prog_args)
     
     else:

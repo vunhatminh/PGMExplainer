@@ -2,6 +2,7 @@ import os
 import numpy as np
 import torch.optim as optim
 import torch
+from pathlib import Path
 
 def gen_prefix(args):
     if args.bmname is not None:
@@ -29,7 +30,7 @@ def save_checkpoint(model, optimizer, args, num_epochs=-1, isbest=False, save_da
             "optimizer_state": optimizer.state_dict(),
             "save_data": save_data,
         },
-        filename,
+        str(filename),
     )
 
 def load_ckpt(args, isbest=False):

@@ -4,16 +4,7 @@ import explain_tasks as tasks
 prog_args = configs.arg_parse()
 
 if prog_args.dataset is not None:
-    if prog_args.dataset == "enron":
-        print("Explain enron dataset")
-        
-    elif prog_args.dataset == "ppi_essential":
-        print("Explain ppi_essential dataset")
-    
-    elif prog_args.dataset == "eucore":
-        print("Explain eucore dataset")
-    
-    elif prog_args.dataset == "bitcoinalpha":
+    if prog_args.dataset == "bitcoinalpha":
         print("Explain bitcoinalpha dataset")
         explaining_task = "tasks.bitcoin"
         eval(explaining_task)(prog_args)
@@ -22,9 +13,6 @@ if prog_args.dataset is not None:
         print("Explain bitcoinotc dataset")
         explaining_task = "tasks.bitcoin"
         eval(explaining_task)(prog_args)
-    
-    elif prog_args.dataset == "epinions":
-        print("Explain epinions dataset")
         
     elif prog_args.dataset == "amazon":
         print("Explain amazon dataset")

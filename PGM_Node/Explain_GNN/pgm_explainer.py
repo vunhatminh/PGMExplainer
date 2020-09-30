@@ -1,4 +1,5 @@
 import networkx as nx
+import math
 import time
 import torch
 import numpy as np
@@ -9,6 +10,7 @@ from pgmpy.estimators.CITests import chi_square
 from pgmpy.estimators import HillClimbSearch, BicScore
 from pgmpy.models import BayesianModel
 from pgmpy.inference import VariableElimination
+from scipy import stats
 
 
 class Node_Explainer:
@@ -273,31 +275,177 @@ class Node_Explainer:
 
     def generate_evidence(self, evidence_list):
         return dict(zip(evidence_list,[1 for node in evidence_list]))
+    
+    def chi_square(self, X, Y, Z, data):
+        """
+        Modification of Chi-square conditional independence test from pgmpy
+        Tests the null hypothesis that X is independent from Y given Zs.
 
-    def pgm_generate(self, target, data, stats, subnodes):
-        stats_pd = pd.Series(stats, name='p-values')
-        MK_blanket_frame = stats_pd[stats_pd < 0.05]
-        MK_blanket = [node for node in MK_blanket_frame.index if node in subnodes]
+        Parameters
+        ----------
+        X: int, string, hashable object
+            A variable name contained in the data set
+        Y: int, string, hashable object
+            A variable name contained in the data set, different from X
+        Zs: list of variable names
+            A list of variable names contained in the data set, different from X and Y.
+            This is the separating set that (potentially) makes X and Y independent.
+            Default: []
+        Returns
+        -------
+        chi2: float
+            The chi2 test statistic.
+        p_value: float
+            The p_value, i.e. the probability of observing the computed chi2
+            statistic (or an even higher value), given the null hypothesis
+            that X _|_ Y | Zs.
+        sufficient_data: bool
+            A flag that indicates if the sample size is considered sufficient.
+            As in [4], require at least 5 samples per parameter (on average).
+            That is, the size of the data set must be greater than
+            `5 * (c(X) - 1) * (c(Y) - 1) * prod([c(Z) for Z in Zs])`
+            (c() denotes the variable cardinality).
+        References
+        ----------
+        [1] Koller & Friedman, Probabilistic Graphical Models - Principles and Techniques, 2009
+        Section 18.2.2.3 (page 789)
+        [2] Neapolitan, Learning Bayesian Networks, Section 10.3 (page 600ff)
+            http://www.cs.technion.ac.il/~dang/books/Learning%20Bayesian%20Networks(Neapolitan,%20Richard).pdf
+        [3] Chi-square test https://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test#Test_of_independence
+        [4] Tsamardinos et al., The max-min hill-climbing BN structure learning algorithm, 2005, Section 4
+        """
+        X = str(int(X))
+        Y = str(int(Y))
+        if isinstance(Z, (frozenset, list, set, tuple)):
+            Z = list(Z)        
+        Z = [str(int(z)) for z in Z]
+            
+        state_names = {
+            var_name: data.loc[:, var_name].unique() for var_name in data.columns
+        }
+        
+        row_index = state_names[X]
+        column_index = pd.MultiIndex.from_product(
+                [state_names[Y]] + [state_names[z] for z in Z], names=[Y] + Z
+            )
+        
+        XYZ_state_counts = pd.crosstab(
+                    index=data[X], columns= [data[Y]] + [data[z] for z in Z],
+                    rownames=[X], colnames=[Y] + Z
+                )
+
+        if not isinstance(XYZ_state_counts.columns, pd.MultiIndex):
+                XYZ_state_counts.columns = pd.MultiIndex.from_arrays([XYZ_state_counts.columns])
+        XYZ_state_counts = XYZ_state_counts.reindex(
+                index=row_index, columns=column_index
+            ).fillna(0)
+        
+        if Z:
+            XZ_state_counts = XYZ_state_counts.sum(axis=1,level = list( range(1,len(Z)+1)) )  # marginalize out Y
+            YZ_state_counts = XYZ_state_counts.sum().unstack(Z)  # marginalize out X
+        else:
+            XZ_state_counts = XYZ_state_counts.sum(axis=1)
+            YZ_state_counts = XYZ_state_counts.sum()
+        Z_state_counts = YZ_state_counts.sum()  # marginalize out both
+        
+        XYZ_expected = np.zeros(XYZ_state_counts.shape)
+
+        r_index = 0
+        for X_val in XYZ_state_counts.index:
+            X_val_array = []
+            if Z:
+                for Y_val in XYZ_state_counts.columns.levels[0]:
+                    temp = XZ_state_counts.loc[X_val] * YZ_state_counts.loc[Y_val] / Z_state_counts
+                    X_val_array = X_val_array + list(temp.to_numpy())
+                XYZ_expected[r_index] = np.asarray(X_val_array)
+                r_index=+1
+            else:
+                for Y_val in XYZ_state_counts.columns:
+                    temp = XZ_state_counts.loc[X_val] * YZ_state_counts.loc[Y_val] / Z_state_counts
+                    X_val_array = X_val_array + [temp]
+                XYZ_expected[r_index] = np.asarray(X_val_array)
+                r_index=+1
+        
+        observed = XYZ_state_counts.to_numpy().reshape(1,-1)
+        expected = XYZ_expected.reshape(1,-1)
+        observed, expected = zip(*((o, e) for o, e in zip(observed[0], expected[0]) if not (e == 0 or math.isnan(e) )))
+        chi2, significance_level = stats.chisquare(observed, expected)
+
+        return chi2, significance_level
+    
+    def search_MK(self, data, target, nodes):
+        target = str(int(target))
+        data.columns = data.columns.astype(str)
+        nodes = [str(int(node)) for node in nodes]
+        
+        MB = nodes
+        while True:
+            count = 0
+            for node in nodes:
+                evidences = MB.copy()
+                evidences.remove(node)    
+                _, p = self.chi_square(target, node, evidences, data[nodes+ [target]])
+                if p > 0.05:
+                    MB.remove(node)
+                    count = 0
+                else:
+                    count = count + 1
+                    if count == len(MB):
+                        return MB
+    
+    def pgm_generate(self, target, data, pgm_stats, subnodes, child = None):
+   
+        subnodes = [str(int(node)) for node in subnodes]
+        target = str(int(target))
         subnodes_no_target = [node for node in subnodes if node != target]
-        est = HillClimbSearch(data[subnodes_no_target], scoring_method=BicScore(data))
-        pgm_no_target = est.estimate()
-        for node in MK_blanket:
-            if node != target:
-                pgm_no_target.add_edge(node,target)
+        data.columns = data.columns.astype(str)
+        
+        MK_blanket = self.search_MK(data, target, subnodes_no_target.copy())
+        
 
-    #   Create the pgm    
-        pgm_explanation = BayesianModel()
-        for node in pgm_no_target.nodes():
-            pgm_explanation.add_node(node)
-        for edge in pgm_no_target.edges():
-            pgm_explanation.add_edge(edge[0],edge[1])
+        if child == None:
+            est = HillClimbSearch(data[subnodes_no_target], scoring_method=BicScore(data))
+            pgm_no_target = est.estimate()
+            for node in MK_blanket:
+                if node != target:
+                    pgm_no_target.add_edge(node,target)
 
-    #   Fit the pgm
-        data_ex = data[subnodes].copy()
-        data_ex[target] = data[target].apply(self.generalize_target)
-        for node in subnodes_no_target:
-            data_ex[node] = data[node].apply(self.generalize_others)
-        pgm_explanation.fit(data_ex)
+        #   Create the pgm    
+            pgm_explanation = BayesianModel()
+            for node in pgm_no_target.nodes():
+                pgm_explanation.add_node(node)
+            for edge in pgm_no_target.edges():
+                pgm_explanation.add_edge(edge[0],edge[1])
+
+        #   Fit the pgm
+            data_ex = data[subnodes].copy()
+            data_ex[target] = data[target].apply(self.generalize_target)
+            for node in subnodes_no_target:
+                data_ex[node] = data[node].apply(self.generalize_others)
+            pgm_explanation.fit(data_ex)
+        else:
+            data_ex = data[subnodes].copy()
+            data_ex[target] = data[target].apply(self.generalize_target)
+            for node in subnodes_no_target:
+                data_ex[node] = data[node].apply(self.generalize_others)
+                
+            est = HillClimbSearch(data_ex, scoring_method=BicScore(data_ex))
+            pgm_w_target_explanation = est.estimate()
+            
+            #   Create the pgm    
+            pgm_explanation = BayesianModel()
+            for node in pgm_w_target_explanation.nodes():
+                pgm_explanation.add_node(node)
+            for edge in pgm_w_target_explanation.edges():
+                pgm_explanation.add_edge(edge[0],edge[1])
+
+            #   Fit the pgm
+            data_ex = data[subnodes].copy()
+            data_ex[target] = data[target].apply(self.generalize_target)
+            for node in subnodes_no_target:
+                data_ex[node] = data[node].apply(self.generalize_others)
+            pgm_explanation.fit(data_ex)
+        
 
         return pgm_explanation
     
