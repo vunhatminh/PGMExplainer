@@ -1,5 +1,7 @@
 # PGMExplainer
 
+This is the source code for the paper: **PGM-Explainer: Probabilistic Graphical Model Explanations for Graph Neural Networks**
+
 ![Image of Yaktocat](https://github.com/vunhatminh/PGMExplainer/blob/master/PGM_Node/Explain_GNN/view/GNNDiagram.png)
 
 Generating PGM Explanation for GNN predictions.
