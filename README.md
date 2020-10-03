@@ -21,3 +21,7 @@ Required libraries:
   * pgmpy 0.1.11
   * dgl 0.4.2
   * pytorch 1.6.8
+  
+To install the above libraries:
+
+'pip install -r requirements.txt'
