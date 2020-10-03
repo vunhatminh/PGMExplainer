@@ -22,6 +22,6 @@ Required libraries:
   * dgl 0.4.2
   * pytorch 1.6.8
   
-To install the above libraries:
+To install above libraries:
 
 `pip install -r requirements.txt`
