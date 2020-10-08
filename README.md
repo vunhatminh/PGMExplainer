@@ -25,3 +25,5 @@ Required libraries:
 To install above libraries:
 
 `pip install -r requirements.txt`
+
+**For more details, please check the README in two subfolders**
