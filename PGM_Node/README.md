@@ -55,3 +55,13 @@ To evaluate explanations, direct into Explain_GNN folder and run:
    * reports are stored in result folder
 
 We also include the notebook *notebook_example_on_syn_6.ipynb* as an example.
+
+Reported Results:
+
+<p align="center">
+  <img src="https://github.com/vunhatminh/PGMExplainer/blob/master/PGM_Node/Explain_GNN/result/syn_result.png"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/vunhatminh/PGMExplainer/blob/master/PGM_Node/Explain_GNN/result/bitcoin_result.png"/>
+</p>
